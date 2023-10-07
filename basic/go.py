@@ -17,10 +17,20 @@ def __save_overview_data():
     d_type_mapping = {'tickerSymbol': str, 'stockName': str}
     stock_df = pd.read_csv(stock_info_file_data_path, dtype=d_type_mapping)
 
-    stock_df["pb"] = ""
+    # 列
+    stock_df["eps"] = ""
+    stock_df["roe"] = ""
     stock_df["pe"] = ""
+    stock_df["pb"] = ""
+    stock_df["revenue"] = ""
+    stock_df["gross_profit"] = ""
+    stock_df["de_ratio"] = ""
+    stock_df["revenue_growth"] = ""
+    stock_df["profit_growth"] = ""
     stock_df["industry1"] = ""
     stock_df["industry2"] = ""
+    col_list = stock_df.columns.tolist()
+    col_list = col_list[2:]
 
     for index, row in stock_df.iterrows():
         symbol = row.tickerSymbol
@@ -28,10 +38,8 @@ def __save_overview_data():
         overview = guosen.get_overview_data(symbol)
 
         if overview is not None:
-            stock_df.loc[index, "pb"] = overview["pb"]
-            stock_df.loc[index, "pe"] = overview["pe"]
-            stock_df.loc[index, "industry1"] = overview["industry1"]
-            stock_df.loc[index, "industry2"] = overview["industry2"]
+            for col in col_list:
+                stock_df.loc[index, col] = overview[col]
 
     financial_base_path = config.get_file_path(r"data\financial_base.csv")
     stock_df.to_csv(financial_base_path, encoding="utf-8-sig", index=False)
